@@ -135,6 +135,7 @@ final class AutowireArrayParameterCompilerPass implements CompilerPassInterface
         ReflectionMethod $reflectionMethod,
         Definition $definition
     ): void {
+        $used = false;
         $reflectionParameters = $reflectionMethod->getParameters();
         foreach ($reflectionParameters as $reflectionParameter) {
             if ($this->parameterSkipper->shouldSkipParameter($reflectionMethod, $definition, $reflectionParameter)) {
@@ -155,6 +156,11 @@ final class AutowireArrayParameterCompilerPass implements CompilerPassInterface
 
             $argumentName = '$' . $reflectionParameter->getName();
             $definition->setArgument($argumentName, $this->createReferencesFromDefinitions($definitionsOfType));
+            $used = true;
+        }
+
+        if ($used) {
+            trigger_error('Deprecated usage of symplify/autowire-array-parameter: ' . $definition->getClass());
         }
     }
 
